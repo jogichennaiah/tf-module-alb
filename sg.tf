@@ -1,8 +1,9 @@
-# Creates Security Group Public-ALB
-resource "aws_security_group" "alb-public" {
-    count     = var.INTERNAL ? 0:1
+# Creates Security Group for Public-ALB
+resource "aws_security_group" "alb_public" {
+  count       = var.INTERNAL ? 0 : 1 
+
   name        = "roboshop-${var.ENV}-public-alb-sg"
-  description = "Allows Only private traffic"
+  description = "Allows public traffic"
   vpc_id      = data.terraform_remote_state.vpc.outputs.VPC_ID
 
 
@@ -11,7 +12,7 @@ resource "aws_security_group" "alb-public" {
     from_port        = 80
     to_port          = 80
     protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0./0"]
+    cidr_blocks      = ["0.0.0.0/0"]
   }
 
   egress {
@@ -28,11 +29,9 @@ resource "aws_security_group" "alb-public" {
 }
 
 
-
-# Creates Security Group Private-ALB    
-resource "aws_security_group" "alb-private" {
-    count     = var.INTERNAL ? 1:0
-       
+# Creates Security Group for Private-ALB
+resource "aws_security_group" "alb_private" { 
+  count       = var.INTERNAL ? 1 : 0   
 
   name        = "roboshop-${var.ENV}-private-alb-sg"
   description = "Allows Only private traffic"
@@ -42,9 +41,9 @@ resource "aws_security_group" "alb-private" {
   ingress {
     description      = "Allows External HTTP Traffic"
     from_port        = 80
-    to_port          = 80
+    to_port          = 90
     protocol         = "tcp"
-    cidr_blocks      = ["data.terraform_remote_state.vpc.outputs.VPC_CIDR, data.terraform_remote_state.vpc.outputs.DEFAULT_VPC_CIDR"]
+    cidr_blocks      = [data.terraform_remote_state.vpc.outputs.VPC_CIDR, data.terraform_remote_state.vpc.outputs.DEFAULT_VPC_CIDR]
   }
 
   egress {
@@ -59,4 +58,3 @@ resource "aws_security_group" "alb-private" {
     Name = "roboshop-${var.ENV}-private-alb-sg"
   }
 }
-
