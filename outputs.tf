@@ -10,10 +10,4 @@ output "LISTENER_ARN" {
     value = aws_lb_listener.private.*.arn
 }
 
-output "PRIVATE_HOSTED_ZONE_ID" {
-  value = aws_route53_zone.private.id
-}
 
-output "PUBLIC_HOSTED_ZONE_ID" {
-  value = aws_route53_zone.public.id
-}
